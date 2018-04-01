@@ -9,10 +9,10 @@ GPIO.setmode(GPIO.BCM)
 GPIO.cleanup()
 
 # read data using pin 11
-instance = dht11.DHT11(pin=11)
+dht11 = dht11.DHT11(pin=11)
 
 while True:
-    result = instance.read()
+    result = dht11.read()
     if result.is_valid():
         print("Last valid input: " + str(datetime.datetime.now()))
         print("Temperature: %d C" % result.temperature)

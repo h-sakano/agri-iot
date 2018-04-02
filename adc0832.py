@@ -1,47 +1,53 @@
+# coding: utf-8
 import time
 import RPi.GPIO as GPIO
 
 
-class ADC0832:
-    def __init__(self, pinCLK, pinDI, pinDO, pinCS):
+class ADC0832(object):
+    def __init__(self, pinCLK, pinDIO, pinCS):
         self.__pinCLK = pinCLK
-        self.__pinDI = pinDI
-        self.__pinDO = pinDO
+        self.__pinDIO = pinDIO
         self.__pinCS = pinCS
         GPIO.setup(self.__pinCLK, GPIO.OUT)
-        GPIO.setup(self.__pinDI,  GPIO.OUT)
-        GPIO.setup(self.__pinDO,  GPIO.IN)
         GPIO.setup(self.__pinCS,  GPIO.OUT)
 
-    # read SPI data from ADC8032
-    def getADC(channel):
-    	# 1. CS LOW.
-        GPIO.output(PIN_CS, True)      # clear last transmission
-        GPIO.output(PIN_CS, False)     # bring CS low
+    def getResult(self, channel=0):
+		GPIO.setup(self.__pinDIO, GPIO.OUT)
+		GPIO.output(self.__pinCS, 0)
+		
+		GPIO.output(self.__pinCLK, 0)
+		GPIO.output(self.__pinDIO, 1);  time.sleep(0.000002)
+		GPIO.output(self.__pinCLK, 1);  time.sleep(0.000002)
+		GPIO.output(self.__pinCLK, 0)
+	
+		GPIO.output(self.__pinDIO, 1);  time.sleep(0.000002)
+		GPIO.output(self.__pinCLK, 1);  time.sleep(0.000002)
+		GPIO.output(self.__pinCLK, 0)
+	
+		GPIO.output(self.__pinDIO, channel);  time.sleep(0.000002)
+	
+		GPIO.output(self.__pinCLK, 1)
+		GPIO.output(self.__pinDIO, 1);  time.sleep(0.000002)
+		GPIO.output(self.__pinCLK, 0)
+		GPIO.output(self.__pinDIO, 1);  time.sleep(0.000002)
+	
+		dat1 = 0
+		for i in range(0, 8):
+			GPIO.output(self.__pinCLK, 1);  time.sleep(0.000002)
+			GPIO.output(self.__pinCLK, 0);  time.sleep(0.000002)
+			GPIO.setup(self.__pinDIO, GPIO.IN)
+			dat1 = dat1 << 1 | GPIO.input(self.__pinDIO)  
+		
+		dat2 = 0
+		for i in range(0, 8):
+			dat2 = dat2 | GPIO.input(self.__pinDIO) << i
+			GPIO.output(self.__pinCLK, 1);  time.sleep(0.000002)
+			GPIO.output(self.__pinCLK, 0);  time.sleep(0.000002)
+		
+		GPIO.output(self.__pinCS, 1)
+		GPIO.setup(self.__pinDIO, GPIO.OUT)
 
-    	# 2. Start clock
-        GPIO.output(PIN_CLK, False)  # start clock low
-
-    	# 3. Input MUX address
-        for i in [1,1,channel]: # start bit + mux assignment
-            if (i == 1):
-                GPIO.output(PIN_DI, True)
-            else:
-                GPIO.output(PIN_DI, False)
-
-            GPIO.output(PIN_CLK, True)
-            GPIO.output(PIN_CLK, False)
-
-            # 4. read 8 ADC bits
-            ad = 0
-            for i in range(8):
-                GPIO.output(PIN_CLK, True)
-                GPIO.output(PIN_CLK, False)
-                ad <<= 1 # shift bit
-                if (GPIO.input(PIN_DO)):
-                    ad |= 0x1 # set first bit
-
-            # 5. reset
-            GPIO.output(PIN_CS, True)
-
-            return ad
+		if dat1 == dat2:
+			return dat1
+		else:
+			return 0

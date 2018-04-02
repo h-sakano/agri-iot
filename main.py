@@ -50,7 +50,7 @@ while True:
             if delta.seconds > 1800:
                 line_bot_api.push_message(LINE_USER_ID, TextSendMessage(text='もう喉からから・・・。誰か水ちょうだいm(__)m'))
                 lastThirsty = datetime.datetime.now()
-        if yl69Result < 70:
+        if yl69Result < 80:
             if lastWatering < lastThirsty:  # 最後に水やりに喜んだ時間が、最後に喉乾いたメッセージを送信するよりも前の場合
                 line_bot_api.push_message(LINE_USER_ID, TextSendMessage(text='誰かが水をくれたよ！ありがとう！'))
                 lastWatering = datetime.datetime.now()

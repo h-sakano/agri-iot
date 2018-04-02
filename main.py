@@ -16,7 +16,12 @@ GPIO.setmode(GPIO.BCM)
 GPIO.cleanup()
 
 # initialize line messaging api
-line_bot_api = LineBotApi('Your Access Token')
+with open('conf/line/access_token.txt') as f:
+    LINE_ACCESS_TOKEN = f.read()
+with open('conf/line/user_id.txt') as f:
+    LINE_USER_ID = f.read()
+
+line_bot_api = LineBotApi(LINE_ACCESS_TOKEN)
 
 # initialize others
 lastThirsty = datetime.datetime(1970, 1, 1)
@@ -43,9 +48,9 @@ while True:
         if yl69Result > 180:
             delta = now - lastThirsty
             if delta.seconds > 1800:
-                line_bot_api.push_message("Your User ID", TextSendMessage(text='もう喉からから・・・。誰か水ちょうだいm(__)m'))
+                line_bot_api.push_message(LINE_USER_ID, TextSendMessage(text='もう喉からから・・・。誰か水ちょうだいm(__)m'))
                 lastThirsty = datetime.datetime.now()
         if yl69Result < 70:
             if lastWatering < lastThirsty:  # 最後に水やりに喜んだ時間が、最後に喉乾いたメッセージを送信するよりも前の場合
-                line_bot_api.push_message("Your User ID", TextSendMessage(text='誰かが水をくれたよ！ありがとう！'))
+                line_bot_api.push_message(LINE_USER_ID, TextSendMessage(text='誰かが水をくれたよ！ありがとう！'))
                 lastWatering = datetime.datetime.now()

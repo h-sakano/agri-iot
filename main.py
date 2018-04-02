@@ -41,7 +41,7 @@ while True:
             print("Temperature: %d C" % dht11Result.temperature)
             print("Humidity: %d %%" % dht11Result.humidity)
 
-    if now.minute % 10 == 0 and now.second == 0:
+    if now.minute % 2 == 0 and now.second == 0:
         yl69Result = yl69.getResult(0)
         print("Soil moisture: %d" % yl69Result)
 

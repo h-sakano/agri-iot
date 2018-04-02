@@ -14,7 +14,7 @@ class YL69(ADC0832):
         # データ取得前にYL-69に電圧を印可
         GPIO.output(self.__pinYl69Vcc, True)
 
-        time.sleep(5)
+        time.sleep(1)
 
         ret = super(YL69, self).getResult(channel)
 

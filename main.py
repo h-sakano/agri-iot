@@ -17,9 +17,9 @@ GPIO.cleanup()
 
 # initialize line messaging api
 with open('conf/line/access_token.txt') as f:
-    LINE_ACCESS_TOKEN = f.read()
+    LINE_ACCESS_TOKEN = f.read().rstrip("\n")
 with open('conf/line/user_id.txt') as f:
-    LINE_USER_ID = f.read()
+    LINE_USER_ID = f.read().rstrip("\n")
 
 line_bot_api = LineBotApi(LINE_ACCESS_TOKEN)
 

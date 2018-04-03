@@ -54,7 +54,7 @@ while True:
 
     if now.minute == 0 and now.second == 0:
         while True:
-            dht11Result = dht11.read():
+            dht11Result = dht11.read()
             if dht11Result.is_valid():
                 print("Temperature: %d C" % dht11Result.temperature)
                 print("Humidity: %d %%" % dht11Result.humidity)
@@ -70,7 +70,7 @@ while True:
 
         if yl69Result > THIRSTY_THRESH:
             delta = now - lastThirsty
-            if delta.seconds > 1800:
+            if delta.seconds > 7200:
                 push_message_with_time_check(LINE_USER_ID, TextSendMessage(text='もう喉からから・・・。誰か水ちょうだいm(__)m'))
                 lastThirsty = datetime.datetime.now()
         elif yl69Result < WATERING_THRESH:
